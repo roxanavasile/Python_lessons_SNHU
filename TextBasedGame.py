@@ -14,6 +14,7 @@ ROOMS = {
 }
 
 ITEMS_TO_COLLECT = {
+    'Dressing Room': 'mirror',
     'Dining Room': 'garlic',
     'Bedroom': 'cross',
     'Office': 'knife',
@@ -25,6 +26,7 @@ INVENTORY = []
 CURRENT_ROOM = 'Dressing Room'
 DIRECTIONS = ['North', 'South', 'East', 'West']
 EXIT_COMMAND = "Exit"
+DRACULA = ""
 
 # display the game rules
 
@@ -54,13 +56,20 @@ def displayRoomAndItems():
 
 
 def endGame():
+    global DRACULA
+    items = list(ITEMS_TO_COLLECT.values())
+
     print("You're in the Crypt!")
+    new_inv = []
     for value in ITEMS_TO_COLLECT.values():
         if value in INVENTORY:
-            print('You have killed Dracula!')
+            new_inv.append(value)
+    if len(new_inv) == len(items):
+        print("You killed Dracula!")
+        DRACULA = "KILLED"
     else:
         print('Dracula killed you and he will now kill the English countryside!')
-    return False
+    return "Exit"
 
 # move player room based on game map
 
@@ -94,7 +103,10 @@ def collect_inventory(collect_item):
     item = collect_item.split()
 
     if item[1] in ITEMS_TO_COLLECT.values():
-        INVENTORY.append(item[1])
+        if item[1] not in INVENTORY:
+            INVENTORY.append(item[1])
+        else:
+            print('You already have this object!')
     else:
         print('Invalid inventory object.')
 
@@ -106,8 +118,10 @@ def main():
 
     while True:
         displayRoomAndItems()
-        user_move = input('Enter your move:\n\n')
-
+        if DRACULA != "KILLED":
+            user_move = input('Enter your move:\n\n')
+        else:
+            break
         if user_move == EXIT_COMMAND:
             break
         elif user_move in DIRECTIONS:
